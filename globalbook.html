@@ -1,0 +1,492 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Global Book Buchverlag | Bücher kostenlos lesen</title>
+  <style>
+    :root{--bg:#f3f6fb;--card:#fff;--text:#0f172a;--muted:#64748b;--border:rgba(15,23,42,.12);--shadow:0 10px 26px rgba(2,6,23,.08);}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
+    header{background:var(--card);border-bottom:1px solid var(--border);box-shadow:0 2px 14px rgba(2,6,23,.06);position:sticky;top:0;z-index:10}
+    .h{max-width:1100px;margin:0 auto;padding:14px 16px;display:flex;align-items:center;gap:12px}
+    .h img{width:44px;height:44px;object-fit:contain;border:1px solid var(--border);border-radius:10px;background:#fff;padding:6px}
+    .h strong{display:block;font-size:15px} .h span{display:block;font-size:12px;color:var(--muted);margin-top:3px}
+    .sp{flex:1}
+    .link, button.btn, a.btn{font-size:13px;text-decoration:none;color:var(--text);font-weight:900;border:1px solid var(--border);padding:9px 11px;border-radius:999px;background:rgba(15,23,42,.03);cursor:pointer}
+    .link:hover, button.btn:hover, a.btn:hover{background:rgba(15,23,42,.06)}
+    .btn.primary{background:#111827;color:#fff;border-color:#111827}
+    .wrap{max-width:1100px;margin:0 auto;padding:18px 16px 40px}
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+    @media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:600px){.grid{grid-template-columns:1fr}}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);padding:14px}
+    .cover{width:100%;aspect-ratio:2/3;object-fit:cover;border-radius:12px;border:1px solid var(--border);background:#fff}
+    .title{font-size:16px;font-weight:900;margin:10px 0 4px}
+    .meta{font-size:12px;color:var(--muted);margin:0 0 10px;line-height:1.4}
+    .row{display:flex;gap:10px;flex-wrap:wrap}
+    .pill{display:inline-flex;gap:8px;align-items:center;padding:6px 10px;border:1px solid var(--border);border-radius:999px;font-size:12px;color:var(--muted);background:rgba(15,23,42,.02)}
+    .hidden{display:none !important}
+    label{display:block;font-size:12px;color:var(--muted);margin:10px 0 6px}
+    input, textarea{width:100%;padding:10px 12px;border-radius:12px;border:1px solid var(--border);background:#fff}
+    textarea{min-height:90px;resize:vertical}
+    .cols{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    @media(max-width:900px){.cols{grid-template-columns:1fr}}
+    table{width:100%;border-collapse:collapse;margin-top:10px}
+    th,td{border-bottom:1px solid var(--border);text-align:left;padding:8px 6px;font-size:13px}
+    th{color:var(--muted);font-size:12px}
+    footer{margin-top:24px;padding:20px 16px;background:var(--card);border-top:1px solid var(--border);color:var(--muted);text-align:center;font-size:13px}
+    .note{font-size:12px;color:var(--muted)}
+
+    /* ✅ Zusammenfassung Modal (neu) */
+    .modal-backdrop{
+      position:fixed; inset:0;
+      background:rgba(0,0,0,.55);
+      display:flex; align-items:center; justify-content:center;
+      padding:18px; z-index:9999;
+    }
+    .modal-card{
+      width:min(720px, 100%);
+      background:#fff; border-radius:16px; padding:16px;
+      box-shadow:0 10px 26px rgba(0,0,0,.25);
+      border:1px solid rgba(15,23,42,.12);
+    }
+    .modal-head{
+      display:flex; gap:10px; align-items:center; justify-content:space-between;
+      margin-bottom:10px;
+    }
+    .modal-title{
+      font-size:16px; font-weight:900; margin:0;
+    }
+    .modal-sub{
+      font-size:12px; color:var(--muted); margin:0;
+    }
+    .modal-text{
+      margin-top:10px; color:#334155; line-height:1.75; font-size:14px;
+      white-space:pre-wrap;
+    }
+  </style>
+</head>
+
+<body>
+<header>
+  <div class="h">
+    <!-- ✅ LOGO ist hier -->
+    <img src="logo.png" alt="Logo">
+    <div>
+      <strong>Global Book Buchverlag</strong>
+      <span>Bücher kostenlos lesen</span>
+    </div>
+    <div class="sp"></div>
+
+    <button class="btn" onclick="showView('home')">Startseite</button>
+    <button class="btn" onclick="showView('login')">Firmen-Login</button>
+    <button class="btn" onclick="showView('admin')">Admin</button>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- HOME -->
+  <section id="view_home">
+    <div class="row" style="justify-content:space-between;align-items:center;margin-bottom:12px">
+      <div>
+        <h1 style="margin:0 0 4px;font-size:22px">Bücher</h1>
+        <div class="note">Alle veröffentlichten Bücher erscheinen hier.</div>
+      </div>
+      <div class="row">
+        <span class="pill">📚 Kostenlos lesen</span>
+        <span class="pill">⬇️ PDF Download</span>
+      </div>
+    </div>
+    <div class="grid" id="bookGrid"></div>
+  </section>
+
+  <!-- LOGIN -->
+  <section id="view_login" class="hidden">
+    <div class="card" style="max-width:520px;margin:0 auto">
+      <h2 style="margin:0 0 6px;font-size:18px">Firmen-Login</h2>
+      <p class="note">Benutzername & Passwort bekommst du per E-Mail vom Verlag.</p>
+      <label>Benutzername</label>
+      <input id="login_user" placeholder="z.B. ogsexpress">
+      <label>Passwort</label>
+      <input id="login_pass" type="password" placeholder="Passwort">
+      <div class="row" style="margin-top:12px">
+        <button class="btn primary" id="loginBtn">Einloggen</button>
+        <button class="btn" onclick="showView('home')">Zurück</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- PUBLISHER DASHBOARD -->
+  <section id="view_publisher" class="hidden">
+    <div class="row" style="justify-content:space-between;align-items:center;margin-bottom:12px">
+      <div>
+        <h2 style="margin:0;font-size:18px">Publisher Dashboard</h2>
+        <div class="note" id="publisherWho"></div>
+      </div>
+      <div class="row">
+        <button class="btn" onclick="showView('home')">Startseite</button>
+        <button class="btn" id="logoutBtn">Logout</button>
+      </div>
+    </div>
+
+    <div class="cols">
+      <div class="card">
+        <h3 style="margin:0 0 6px;font-size:16px">Buch hinzufügen</h3>
+        <label>Titel</label><input id="pb_title">
+        <label>ISBN</label><input id="pb_isbn">
+        <label>Bewertung (z.B. 9,5)</label><input id="pb_rating">
+        <label>Siegel/Badge (z.B. Top #1 Bestseller)</label><input id="pb_badge">
+        <label>Cover-Datei (z.B. cover2.jpg)</label><input id="pb_cover" placeholder="cover.jpg">
+        <label>PDF-Datei (z.B. buch2.pdf)</label><input id="pb_pdf" placeholder="buch.pdf">
+        <label>Zusammenfassung</label><textarea id="pb_summary"></textarea>
+        <div class="row" style="margin-top:12px">
+          <button class="btn primary" id="pb_add">Buch speichern</button>
+        </div>
+        <p class="note">Hinweis: Die Dateien (Cover/PDF) musst du auch in GitHub hochladen.</p>
+      </div>
+
+      <div class="card">
+        <h3 style="margin:0 0 6px;font-size:16px">Meine Bücher</h3>
+        <table id="publisherBooks"></table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ADMIN -->
+  <section id="view_admin" class="hidden">
+    <div class="card" style="margin-bottom:14px">
+      <h2 style="margin:0 0 6px;font-size:18px">Admin</h2>
+      <p class="note">
+        Admin kann Firmen anlegen und Bücher verwalten.
+        (Prototyp: Daten sind nur im Browser gespeichert.)
+      </p>
+      <div class="row">
+        <span class="pill">🔐 Admin-Passwort: <strong style="color:#0f172a">1234</strong></span>
+      </div>
+    </div>
+
+    <div id="adminLogin" class="card" style="max-width:520px;margin:0 auto">
+      <h3 style="margin:0 0 6px;font-size:16px">Global Book (Administrator) Login</h3>
+      <label>Admin Passwort</label>
+      <input id="admin_pw" type="password" placeholder="Passwort eingeben">
+      <div class="row" style="margin-top:12px">
+        <button class="btn primary" id="adminLoginBtn">Einloggen</button>
+        <button class="btn" onclick="showView('home')">Zurück</button>
+      </div>
+    </div>
+
+    <div id="adminPanel" class="hidden">
+      <div class="cols">
+        <div class="card">
+          <h3 style="margin:0 0 6px;font-size:16px">Firma anlegen</h3>
+          <label>Firmenname</label><input id="a_cname" placeholder="z.B. OGS Express">
+          <label>Benutzername</label><input id="a_cuser" placeholder="z.B. ogsexpress">
+          <label>Passwort</label><input id="a_cpass" placeholder="z.B. starkesPasswort">
+          <div class="row" style="margin-top:12px">
+            <button class="btn primary" id="a_addCompany">Firma speichern</button>
+          </div>
+          <h4 style="margin:16px 0 6px;font-size:14px">Firmenliste</h4>
+          <table id="adminCompanies"></table>
+        </div>
+
+        <div class="card">
+          <h3 style="margin:0 0 6px;font-size:16px">Alle Bücher</h3>
+          <table id="adminBooks"></table>
+          <div class="row" style="margin-top:12px">
+            <button class="btn" id="resetStore">Alles zurücksetzen</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer>Copyright 2026 – Global Book Verlag</footer>
+
+<!-- ✅ Modal (NEU) -->
+<div id="summaryModal" class="modal-backdrop hidden" onclick="closeSummaryOnBackdrop(event)">
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="summaryTitle">
+    <div class="modal-head">
+      <div>
+        <p class="modal-title" id="summaryTitle">Zusammenfassung</p>
+        <p class="modal-sub" id="summaryBookTitle"></p>
+      </div>
+      <button class="btn" onclick="closeSummary()">Schließen ✕</button>
+    </div>
+    <div class="modal-text" id="summaryText"></div>
+  </div>
+</div>
+
+<script>
+  const STORE_KEY = "gb_store_v1";
+  const SESSION_KEY = "gb_session_v1";
+  const ADMIN_PASSWORD = "1234";
+
+  const defaultStore = {
+    companies: [
+      { name:"Global Book Verlag", username:"globalbook", password:"1234" }
+    ],
+    books: [
+      {
+        id:"book_1",
+        owner:"globalbook",
+        title:"Acht Ideen eines großen Visionärs",
+        isbn:"978-3-9862145-1-2",
+        rating:"9,5",
+        badge:"OGS Express – Top #1 Bestseller",
+        cover:"cover.jpg",
+        pdf:"buch.pdf",
+        summary:"Dieses Buch erzählt die Geschichte eines jungen Visionärs, der früh beginnt, unternehmerisch zu denken.\n\nVon der OGS-Party über den Kaboom Shop bis zu Ideen wie Neopen 3X, LUNARIS ONE, HelloHome und HydraWater zeigt es, wie aus Neugier Struktur wird.\n\nEs geht um Mut, Verantwortung, kreative Ideen – und darum, dass man nicht warten muss, bis man „alt genug“ ist, um anzufangen."
+      }
+    ]
+  };
+
+  const $ = (id) => document.getElementById(id);
+
+  function safeClone(obj){ return JSON.parse(JSON.stringify(obj)); }
+
+  function loadStore(){
+    const raw = localStorage.getItem(STORE_KEY);
+    if(!raw){
+      localStorage.setItem(STORE_KEY, JSON.stringify(defaultStore));
+      return safeClone(defaultStore);
+    }
+    try { return JSON.parse(raw); }
+    catch {
+      localStorage.setItem(STORE_KEY, JSON.stringify(defaultStore));
+      return safeClone(defaultStore);
+    }
+  }
+
+  function saveStore(store){ localStorage.setItem(STORE_KEY, JSON.stringify(store)); }
+
+  function loadSession(){
+    const raw = localStorage.getItem(SESSION_KEY);
+    if(!raw) return null;
+    try { return JSON.parse(raw); } catch { return null; }
+  }
+
+  function esc(s){
+    return String(s||"").replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  }
+
+  /* ✅ FIX: showView darf NIE abstürzen */
+  function showView(name){
+    const ids = ["view_home","view_login","view_publisher","view_admin"];
+    ids.forEach(id => {
+      const el = document.getElementById(id);
+      if(el) el.classList.add("hidden");
+    });
+
+    const targetId = "view_" + String(name).trim();
+    const target = document.getElementById(targetId);
+
+    if(target){
+      target.classList.remove("hidden");
+    } else {
+      console.warn("View fehlt:", targetId, "→ gehe zu view_home");
+      const home = document.getElementById("view_home");
+      if(home) home.classList.remove("hidden");
+    }
+  }
+
+  /* ✅ Zusammenfassung: Modal (NEU) */
+  function openSummary(bookTitle, text){
+    const modal = document.getElementById("summaryModal");
+    const t = document.getElementById("summaryText");
+    const st = document.getElementById("summaryBookTitle");
+    if(!modal || !t || !st) return;
+    st.textContent = bookTitle ? ("Buch: " + bookTitle) : "";
+    t.textContent = text || "Keine Zusammenfassung vorhanden.";
+    modal.classList.remove("hidden");
+  }
+  function closeSummary(){
+    const modal = document.getElementById("summaryModal");
+    if(modal) modal.classList.add("hidden");
+  }
+  function closeSummaryOnBackdrop(e){
+    // nur schließen wenn man wirklich auf den dunklen Hintergrund klickt
+    if(e.target && e.target.id === "summaryModal") closeSummary();
+  }
+
+  function renderHome(){
+    const store = loadStore();
+    const grid = $("bookGrid");
+    if(!store.books || store.books.length === 0){
+      grid.innerHTML = `<div class="card" style="grid-column:1/-1">Noch keine Bücher. Admin oder Firmen können Bücher hinzufügen.</div>`;
+      return;
+    }
+
+    grid.innerHTML = store.books.map(b => `
+      <div class="card">
+        <img class="cover" src="${esc(b.cover)}" alt="Cover">
+        <div class="title">${esc(b.title)}</div>
+        <div class="meta">ISBN: ${esc(b.isbn)}<br>⭐ ${esc(b.rating)} · ${esc(b.badge)}</div>
+        <div class="row">
+          <a class="btn primary" href="${esc(b.pdf)}" download>PDF herunterladen</a>
+          <!-- ✅ Button bleibt, nur öffnet jetzt Modal statt "nichts" -->
+        
+        </div>
+      </div>
+    `).join("");
+  }
+
+  function renderAdmin(){
+    const store = loadStore();
+
+    $("adminCompanies").innerHTML = `
+      <tr><th>Firma</th><th>User</th><th>Aktion</th></tr>
+      ${store.companies.map((c,i)=>`
+        <tr>
+          <td>${esc(c.name)}</td>
+          <td>${esc(c.username)}</td>
+          <td><button class="btn" onclick="delCompany(${i})">Löschen</button></td>
+        </tr>
+      `).join("")}
+    `;
+
+    $("adminBooks").innerHTML = `
+      <tr><th>Titel</th><th>Owner</th><th>PDF</th><th>Aktion</th></tr>
+      ${store.books.map((b,i)=>`
+        <tr>
+          <td>${esc(b.title)}</td>
+          <td>${esc(b.owner)}</td>
+          <td>${esc(b.pdf)}</td>
+          <td><button class="btn" onclick="delBook(${i})">Löschen</button></td>
+        </tr>
+      `).join("")}
+    `;
+  }
+
+  function renderPublisher(){
+    const session = loadSession();
+    if(!session){
+      showView("login");
+      return;
+    }
+    $("publisherWho").textContent = `Eingeloggt als: ${session.name} (${session.username})`;
+
+    const store = loadStore();
+    const mine = store.books.filter(b => b.owner === session.username);
+
+    $("publisherBooks").innerHTML = `
+      <tr><th>Titel</th><th>PDF</th><th>Aktion</th></tr>
+      ${mine.map(b => `
+        <tr>
+          <td>${esc(b.title)}</td>
+          <td>${esc(b.pdf)}</td>
+          <td><button class="btn" onclick="delMyBook('${esc(b.id)}')">Löschen</button></td>
+        </tr>
+      `).join("")}
+    `;
+  }
+
+  window.delCompany = (i) => {
+    const store = loadStore();
+    store.companies.splice(i,1);
+    saveStore(store);
+    renderAdmin();
+  };
+
+  window.delBook = (i) => {
+    const store = loadStore();
+    store.books.splice(i,1);
+    saveStore(store);
+    renderAdmin();
+    renderHome();
+    renderPublisher();
+  };
+
+  window.delMyBook = (id) => {
+    const session = loadSession();
+    const store = loadStore();
+    store.books = store.books.filter(b => !(b.id === id && b.owner === session.username));
+    saveStore(store);
+    renderPublisher();
+    renderHome();
+  };
+
+  $("adminLoginBtn").onclick = () => {
+    if($("admin_pw").value.trim() !== ADMIN_PASSWORD) return alert("Falsches Admin-Passwort.");
+    $("adminLogin").classList.add("hidden");
+    $("adminPanel").classList.remove("hidden");
+    renderAdmin();
+  };
+
+  $("a_addCompany").onclick = () => {
+    const store = loadStore();
+    const name = $("a_cname").value.trim();
+    const username = $("a_cuser").value.trim();
+    const password = $("a_cpass").value.trim();
+    if(!name || !username || !password) return alert("Bitte alle Felder ausfüllen.");
+    if(store.companies.some(c => c.username === username)) return alert("Benutzername existiert schon.");
+    store.companies.push({ name, username, password });
+    saveStore(store);
+    $("a_cname").value = ""; $("a_cuser").value = ""; $("a_cpass").value = "";
+    alert("Firma gespeichert. Firmen können sich über Firmen-Login einloggen.");
+    renderAdmin();
+  };
+
+  $("loginBtn").onclick = () => {
+    const u = $("login_user").value.trim();
+    const p = $("login_pass").value.trim();
+    const store = loadStore();
+    const c = store.companies.find(x => x.username === u && x.password === p);
+    if(!c) return alert("Login falsch.");
+    localStorage.setItem(SESSION_KEY, JSON.stringify({ username:c.username, name:c.name, ts: Date.now() }));
+    $("login_user").value = ""; $("login_pass").value = "";
+    showView("publisher");
+    renderPublisher();
+  };
+
+  $("pb_add").onclick = () => {
+    const session = loadSession();
+    if(!session) return showView("login");
+
+    const store = loadStore();
+    const b = {
+      id: "book_" + Date.now(),
+      owner: session.username,
+      title: $("pb_title").value.trim(),
+      isbn: $("pb_isbn").value.trim(),
+      rating: $("pb_rating").value.trim(),
+      badge: $("pb_badge").value.trim(),
+      cover: ($("pb_cover").value.trim() || "cover.jpg"),
+      pdf: ($("pb_pdf").value.trim() || "buch.pdf"),
+      summary: $("pb_summary").value.trim()
+    };
+    if(!b.title) return alert("Titel fehlt.");
+    store.books.push(b);
+    saveStore(store);
+
+    $("pb_title").value=""; $("pb_isbn").value=""; $("pb_rating").value="";
+    $("pb_badge").value=""; $("pb_cover").value=""; $("pb_pdf").value=""; $("pb_summary").value="";
+
+    alert("Buch gespeichert. Es erscheint auf der Startseite.");
+    renderPublisher();
+    renderHome();
+  };
+
+  $("logoutBtn").onclick = () => {
+    localStorage.removeItem(SESSION_KEY);
+    showView("home");
+    renderHome();
+  };
+
+  $("resetStore").onclick = () => {
+    if(!confirm("Wirklich ALLES zurücksetzen?")) return;
+    localStorage.removeItem(STORE_KEY);
+    localStorage.removeItem(SESSION_KEY);
+    renderHome();
+    alert("Zurückgesetzt.");
+    showView("home");
+  };
+
+  renderHome();
+  showView("home");
+</script>
+</body>
+</html>
